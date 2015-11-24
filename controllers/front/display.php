@@ -7,7 +7,7 @@ class mymoduledisplayModuleFrontController extends ModuleFrontController
         parent::initContent();
         $this->context->smarty->assign(
             array(
-                'coucou' => 'salut les gens'
+                'coucou' => $this->module->l('salut les gens')
             )
         );
         $this->setTemplate('display.tpl');

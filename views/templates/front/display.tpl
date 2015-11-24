@@ -1,11 +1,4 @@
-Welcome to my shop!<br>
-<br>
-{$coucou}
-<br>
-{debug}
-
-<br>
-<pre>
-    {$coucou|@print_r}<br>
-    {$coucou|@var_dump}
-</pre>
+<h1>{l s='Welcome to my shop!' mod='mymodule'}</h1>
+<div class="block_content">
+    {$coucou}
+</div>
