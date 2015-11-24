@@ -1,9 +1,16 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: emilien
- * Date: 20/11/2015
- * Time: 10:56
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to a commercial license from 202 ecommerce
+ * Use, copy, modification or distribution of this source file without written
+ * license agreement from 202 ecommerce is strictly forbidden.
+ *
+ * @author    Emilien Baudet <ebaudet@202-ecommerce.com>
+ * @copyright Copyright (c) 202 ecommerce 2015
+ * @license   Commercial license
+ *
+ * Support <support@202-ecommerce.com>
  */
 
 if (!defined('_PS_VERSION_')) {
@@ -15,7 +22,7 @@ class MyModule extends Module
     public function __construct()
     {
         $this->name = 'mymodule';
-        $this->tab = 'front_office_feature';
+        $this->tab = 'front_office_features';
         $this->version = '1.0.0';
         $this->author = 'Emilien Baudet';
         $this->need_instance = 0;
@@ -64,7 +71,7 @@ class MyModule extends Module
         $output = null;
 
         if (Tools::isSubmit('submit' . $this->name)) {
-            $my_module_name = strval(Tools::getValue('MYMODULE_NAME'));
+            $my_module_name = (string)Tools::getValue('MYMODULE_NAME');
             if (!$my_module_name ||
                 empty($my_module_name) ||
                 !Validate::isGenericName($my_module_name)
@@ -85,6 +92,7 @@ class MyModule extends Module
         $default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
 
         // Init Fields form array
+        $fields_form = array();
         $fields_form[0]['form'] = array(
             'legend' => array(
                 'title' => $this->l('Settings'),
@@ -145,8 +153,8 @@ class MyModule extends Module
     {
         $this->context->smarty->assign(
             array(
-                'my_module_name' => Configuration::get('MYMODULE_NAME'),
-                'my_module_link' => $this->context->link->getModuleLink('mymodule', 'display'),
+                'my_module_name'    => Configuration::get('MYMODULE_NAME'),
+                'my_module_link'    => $this->context->link->getModuleLink('mymodule', 'display'),
                 'my_module_message' => $this->l('This is a simple text message')
             )
         );
@@ -161,6 +169,6 @@ class MyModule extends Module
 
     public function hookDisplayHeader()
     {
-        $this->context->controller->addCSS($this->_path . 'css/mymodule.css', 'all');
+        $this->context->controller->addCSS($this->_path . 'views/css/mymodule.css', 'all');
     }
 }
