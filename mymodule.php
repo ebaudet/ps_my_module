@@ -146,7 +146,8 @@ class MyModule extends Module
         $this->context->smarty->assign(
             array(
                 'my_module_name' => Configuration::get('MYMODULE_NAME'),
-                'my_module_link' => $this->context->link->getModuleLink('mymodule', 'display')
+                'my_module_link' => $this->context->link->getModuleLink('mymodule', 'display'),
+                'my_module_message' => $this->l('This is a simple text message')
             )
         );
 

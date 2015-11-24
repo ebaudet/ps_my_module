@@ -11,6 +11,9 @@
             {/if}
             !
         </p>
+        <p>
+            {$my_module_message}
+        </p>
         <ul>
             <li><a href="{$my_module_link}" title="Click this link">Click me!</a></li>
         </ul>
