@@ -32,11 +32,11 @@ if (_PS_VERSION_ < '1.5') {
 
             include('../../footer.php');
         } else {
-            header("Location: ../");
+            Tools::redirect("../");
         }
     } else {
-        header("Location: ../");
+        Tools::redirect("../");
     }
 } else {
-    header("Location: ../");
+    Tools::redirect("../");
 }

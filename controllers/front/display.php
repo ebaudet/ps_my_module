@@ -17,4 +17,4 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 //display controller PS 1.5
-require_once _PS_MODULE_DIR_.'/mymodule/MyModuleFrontController.php';
+require_once _PS_MODULE_DIR_ . '/mymodule/MyModuleFrontController.php';

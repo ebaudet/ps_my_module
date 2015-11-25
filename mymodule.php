@@ -77,10 +77,9 @@ class MyModule extends Module
     // Retrocompatibility 1.4/1.5
     private function initContext()
     {
-        if (class_exists('Context'))
+        if (class_exists('Context')) {
             $this->context = Context::getContext();
-        else
-        {
+        } else {
             global $smarty, $cookie;
             $this->context = new StdClass();
             $this->context->smarty = $smarty;
@@ -180,7 +179,7 @@ class MyModule extends Module
     {
         global $currentIndex;
 
-        $defaultLanguage = intval(Configuration::get('PS_LANG_DEFAULT'));
+        $defaultLanguage = (int)Configuration::get('PS_LANG_DEFAULT');
         $languages = Language::getLanguages();
         $obj = $this;
 
@@ -197,8 +196,11 @@ class MyModule extends Module
 
         foreach ($languages as $language) {
             $form .= '
-                <div id="name_' . $language['id_lang' | 'id_lang'] . '" style="display: ' . ($language['id_lang' | 'id_lang'] == $defaultLanguage ? 'block' : 'none') . '; float: left;">
-                <input size="33" type="text" name="name_' . $language['id_lang' | 'id_lang'] . '" value="' . htmlentities(Configuration::get('MYMODULE_NAME', intval($language['id_lang' | 'id_lang']))) . '" /><sup>*</sup>
+                <div id="name_' . $language['id_lang' | 'id_lang'] . '" style="display: ' .
+                ($language['id_lang' | 'id_lang'] == $defaultLanguage ? 'block' : 'none') . '; float: left;">
+                <input size="33" type="text" name="name_' . $language['id_lang' | 'id_lang'] .
+                '" value="' . htmlentities(Configuration::get('MYMODULE_NAME', (int)$language['id_lang' | 'id_lang'])) .
+                '" /><sup>*</sup>
                 </div>';
         }
         $this->displayFlags($languages, $defaultLanguage, 'name', 'name');
@@ -244,10 +246,11 @@ class MyModule extends Module
         $this->context->smarty->assign(
             array(
                 'my_module_name'    => Configuration::get('MYMODULE_NAME'),
-                    'my_module_link'    => $my_module_link,
+                'my_module_link'    => $my_module_link,
                 'my_module_message' => $this->l('This is a simple text message')
             )
         );
+
         return $this->display(__FILE__, '/views/templates/hook/mymodule.tpl');
     }
 

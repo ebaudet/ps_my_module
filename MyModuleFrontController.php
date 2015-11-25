@@ -12,21 +12,21 @@
  *
  * Support <support@202-ecommerce.com>
  */
-if (_PS_VERSION_ < '1.5')
-    include_once 'controllers/front/MyFrontController14.php';
-else
-    include_once 'controllers/front/MyFrontController16.php';
 
-require_once(dirname(__FILE__).'/../../config/config.inc.php');
-require_once(dirname(__FILE__).'/../../init.php');
+if (_PS_VERSION_ < '1.5') {
+    include_once 'controllers/front/MyFrontController14.php';
+} else {
+    include_once 'controllers/front/MyFrontController16.php';
+}
+
+require_once(dirname(__FILE__) . '/../../config/config.inc.php');
+require_once(dirname(__FILE__) . '/../../init.php');
 
 include_once 'mymodule.php';
 include_once 'controllers/front/display.php';
 
 //Load the correct class version for PS 1.4 or PS 1.5
-
-
-class MyModuleFrontController extends mymoduledisplayModuleFrontController
+class MyModuleFrontController extends MyModuleDisplayModuleFrontController
 {
 
 }
