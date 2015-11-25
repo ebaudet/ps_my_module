@@ -36,6 +36,14 @@ class MyModule extends Module
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
 
+        /* Backward compatibility */
+        if (_PS_VERSION_ < '1.5') {
+            require(_PS_MODULE_DIR_ . $this->name . '/backward_compatibility/backward.php');
+        }
+
+        // Retrocompatibility
+        $this->initContext();
+
         if (!Configuration::get('MYMODULE_NAME')) {
             $this->warning = $this->l('No name provided');
         }
@@ -43,8 +51,10 @@ class MyModule extends Module
 
     public function install()
     {
-        if (Shop::isFeatureActive()) {
-            Shop::setContext(Shop::CONTEXT_ALL);
+        if (_PS_VERSION_ >= '1.5') {
+            if (Shop::isFeatureActive()) {
+                Shop::setContext(Shop::CONTEXT_ALL);
+            }
         }
 
         return parent::install() &&
@@ -62,6 +72,20 @@ class MyModule extends Module
         }
 
         return true;
+    }
+
+    // Retrocompatibility 1.4/1.5
+    private function initContext()
+    {
+        if (class_exists('Context'))
+            $this->context = Context::getContext();
+        else
+        {
+            global $smarty, $cookie;
+            $this->context = new StdClass();
+            $this->context->smarty = $smarty;
+            $this->context->cookie = $cookie;
+        }
     }
 
     // Configuration functions
@@ -83,7 +107,11 @@ class MyModule extends Module
             }
         }
 
-        return $output . $this->displayForm();
+        if (_PS_VERSION_ >= '1.5') {
+            return $output . $this->displayForm();
+        } else {
+            return $output . $this->displayForm14();
+        }
     }
 
     public function displayForm()
@@ -147,19 +175,80 @@ class MyModule extends Module
         return $helper->generateForm($fields_form);
     }
 
+    // Compatibility 1.4
+    public function displayForm14()
+    {
+        global $currentIndex;
+
+        $defaultLanguage = intval(Configuration::get('PS_LANG_DEFAULT'));
+        $languages = Language::getLanguages();
+        $obj = $this;
+
+        $form = '<script type="text/javascript">
+                    id_language = Number(' . $defaultLanguage . ');
+              </script>';
+
+        $form .= '
+            <form action="' . $currentIndex . '&submitAdd' . $this->table . '=1&token=' . Tools::getAdminTokenLite('AdminModules') . '" method="post" class="width3">
+            ' . ($obj->id ? '<input type="hidden" name="id_' . $this->table . '" value="' . $obj->id . '" />' : '') . '
+            <fieldset><legend><img src="../img/admin/profiles.png" />' . $this->l('Profiles') . '</legend>
+            <label>' . $this->l('Name:') . ' </label>
+            <div class="margin-form">';
+
+        foreach ($languages as $language) {
+            $form .= '
+                <div id="name_' . $language['id_lang' | 'id_lang'] . '" style="display: ' . ($language['id_lang' | 'id_lang'] == $defaultLanguage ? 'block' : 'none') . '; float: left;">
+                <input size="33" type="text" name="name_' . $language['id_lang' | 'id_lang'] . '" value="' . htmlentities(Configuration::get('MYMODULE_NAME', intval($language['id_lang' | 'id_lang']))) . '" /><sup>*</sup>
+                </div>';
+        }
+        $this->displayFlags($languages, $defaultLanguage, 'name', 'name');
+        $form .= '
+            <div class="clear"></div>
+            </div>
+            <div class="margin-form">
+            <input type="submit" value="' . $this->l('Save') . '" name="submitAdd' . $this->table . '" class="button" />
+            </div>
+            <div class="small"><sup>*</sup> ' . $this->l('Required field') . '</div>
+            </fieldset>
+            </form> ';
+
+        return $form;
+    }
+
     // Hook functions
 
     public function hookDisplayLeftColumn($params)
     {
+        return $this->hookLeftColumn($params);
+//        $this->context->smarty->assign(
+//            array(
+//                'my_module_name'    => Configuration::get('MYMODULE_NAME'),
+//                'my_module_link'    => $this->context->link->getModuleLink('mymodule', 'display'),
+//                'my_module_message' => $this->l('This is a simple text message')
+//            )
+//        );
+//
+//        return $this->display(__FILE__, 'mymodule.tpl');
+    }
+
+    public function hookLeftColumn($params)
+    {
+
+        if (_PS_VERSION_ < '1.5') {
+            $my_module_link = _PS_BASE_URL_ . __PS_BASE_URI__ . 'modules/' . $this->name . '/sendtoMymodule.php?display=true&token=' . Tools::getAdminTokenLite('AdminModules');
+//            __PS_BASE_URI__.'modules/'.$this->name.
+        } else {
+            $my_module_link = $this->context->link->getModuleLink('mymodule', 'display');
+        }
+
         $this->context->smarty->assign(
             array(
                 'my_module_name'    => Configuration::get('MYMODULE_NAME'),
-                'my_module_link'    => $this->context->link->getModuleLink('mymodule', 'display'),
+                    'my_module_link'    => $my_module_link,
                 'my_module_message' => $this->l('This is a simple text message')
             )
         );
-
-        return $this->display(__FILE__, 'mymodule.tpl');
+        return $this->display(__FILE__, '/views/templates/hook/mymodule.tpl');
     }
 
     public function hookDisplayRightColumn($params)

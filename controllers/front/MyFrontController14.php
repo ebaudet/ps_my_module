@@ -13,8 +13,9 @@
  * Support <support@202-ecommerce.com>
  */
 
-if (!defined('_PS_VERSION_')) {
-    exit;
+include_once _PS_ROOT_DIR_.'/classes/FrontController.php';
+
+class MyFrontDisplayController extends FrontControllerCore
+{
+
 }
-//display controller PS 1.5
-require_once _PS_MODULE_DIR_.'/mymodule/MyModuleFrontController.php';
