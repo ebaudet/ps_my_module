@@ -13,9 +13,8 @@
  * Support <support@202-ecommerce.com>
  */
 
-include_once _PS_ROOT_DIR_.'/classes/FrontController.php';
-
-class MyFrontDisplayController extends FrontControllerCore
+//include_once _PS_ROOT_DIR_.'/classes/controllers/FrontController.php';
+class mymoduledisplayModuleFrontController extends ModuleFrontController
 {
     public function initContent()
     {

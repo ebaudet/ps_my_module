@@ -15,7 +15,7 @@
 
 include_once _PS_ROOT_DIR_.'/classes/FrontController.php';
 
-class MyFrontDisplayController extends FrontControllerCore
+class mymoduledisplayModuleFrontController extends FrontControllerCore
 {
 
 }
