@@ -246,34 +246,16 @@ class MyModule extends Module
 
     // hook action
 
-    public function hookActionProductAttributeUpdate($params)
-    {
-        $this->myModuleLogError("hookActionProductAttributeUpdate appelée");
-        $this->actionProductUpdate($params);
-    }
-
     public function hookActionProductUpdate($params)
     {
-        $this->myModuleLogError("hookActionProductUpdate appelée");
-        $this->actionProductUpdate($params);
-    }
-
-    public function actionProductUpdate($params)
-    {
-        $this->myModuleLogError("actionProductUpdate: hook action call", 0);
-//        Tools::error_log("actionProductUpdate: hook action call", 1, "error_mymodule.log");
+        $this->myModuleLogError("hookActionProductUpdate: hook action call", 0);
         $id_product = (int)$params['id_product'];
         $product = new Product($id_product);
-//        $product = $params['product'];
 
         if (!Validate::isLoadedObject($product)) {
             $this->myModuleLogError("Erreur no validate product", 4);
-
-//            Tools::error_log("Erreur no validate product", 3, "error_mymodule.log");
             return;
         }
-
-//        Tools::error_log("Je passe ici");
 
         $mail_admin = (string)Configuration::get('MA_MERCHANT_MAILS');
         try {
@@ -298,7 +280,6 @@ class MyModule extends Module
             $this->myModuleLogError("actionProductUpdate: mail envoyé à " . $mail_admin, 0);
         } catch (Exception $e) {
             $this->myModuleLogError($e, 4);
-//            Tools::error_log($e, 4, "error_mymodule.log");
         }
     }
 

@@ -1,2 +1,3 @@
 .DS_Store
 config*.xml
+error_mymodule.log
