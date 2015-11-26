@@ -1,0 +1,11 @@
+
+[{shop_url}]
+
+Bonjour,
+
+Le produit {product_name} a été modifié.
+
+Vous pouvez voir ceci à l'url suivante :
+[{product_url}]
+
+{shop_name} [{shop_url}]

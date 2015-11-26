@@ -57,6 +57,7 @@ class MyModule extends Module
         return parent::install() &&
         $this->registerHook('leftColumn') &&
         $this->registerHook('header') &&
+        $this->registerHook('actionProductUpdate') &&
         Configuration::updateValue('MYMODULE_NAME', 'my friend');
     }
 
@@ -161,34 +162,35 @@ class MyModule extends Module
     // Compatibility 1.4
     public function displayForm14()
     {
-        global $currentIndex;
+        if (_PS_VERSION_ < '1.5') {
+            global $currentIndex;
 
-        $defaultLanguage = (int)Configuration::get('PS_LANG_DEFAULT');
-        $languages = Language::getLanguages();
-        $obj = $this;
+            $defaultLanguage = (int)Configuration::get('PS_LANG_DEFAULT');
+            $languages = Language::getLanguages();
+            $obj = $this;
 
-        $form = '<script type="text/javascript">
+            $form = '<script type="text/javascript">
                     id_language = Number(' . $defaultLanguage . ');
               </script>';
 
-        $form .= '
-            <form action="' . $currentIndex . '&submitAdd' . $this->table . '=1&token=' . Tools::getAdminTokenLite('AdminModules') . '" method="post" class="width3">
-            ' . ($obj->id ? '<input type="hidden" name="id_' . $this->table . '" value="' . $obj->id . '" />' : '') . '
-            <fieldset><legend><img src="../img/admin/profiles.png" />' . $this->l('Profiles') . '</legend>
-            <label>' . $this->l('Name:') . ' </label>
-            <div class="margin-form">';
-
-        foreach ($languages as $language) {
             $form .= '
+                <form action="' . $currentIndex . '&submitAdd' . $this->table . '=1&token=' .
+                Tools::getAdminTokenLite('AdminModules') . '" method="post" class="width3">' .
+                ($obj->id ? '<input type="hidden" name="id_' . $this->table . '" value="' . $obj->id . '" />' : '') .
+                '<fieldset><legend><img src="../img/admin/profiles.png" />' . $this->l('Profiles') . '</legend><label>' .
+                $this->l('Name:') . ' </label><div class="margin-form">';
+
+            foreach ($languages as $language) {
+                $form .= '
                 <div id="name_' . $language['id_lang' | 'id_lang'] . '" style="display: ' .
-                ($language['id_lang' | 'id_lang'] == $defaultLanguage ? 'block' : 'none') . '; float: left;">
-                <input size="33" type="text" name="name_' . $language['id_lang' | 'id_lang'] .
-                '" value="' . htmlentities(Configuration::get('MYMODULE_NAME', (int)$language['id_lang' | 'id_lang'])) .
-                '" /><sup>*</sup>
+                    ($language['id_lang' | 'id_lang'] == $defaultLanguage ? 'block' : 'none') . '; float: left;">
+                <input size="33" type="text" name="name_' . $language['id_lang' | 'id_lang'] . '" value="' .
+                    htmlentities(Configuration::get('MYMODULE_NAME', (int)$language['id_lang' | 'id_lang'])) .
+                    '" /><sup>*</sup>
                 </div>';
-        }
-        $this->displayFlags($languages, $defaultLanguage, 'name', 'name');
-        $form .= '
+            }
+            $this->displayFlags($languages, $defaultLanguage, 'name', 'name');
+            $form .= '
             <div class="clear"></div>
             </div>
             <div class="margin-form">
@@ -196,12 +198,15 @@ class MyModule extends Module
             </div>
             <div class="small"><sup>*</sup> ' . $this->l('Required field') . '</div>
             </fieldset>
-            </form> ';
+            </form>
+            ';
 
-        return $form;
+            return $form;
+        }
+
     }
 
-    // Hook functions
+    // Hook display
 
     public function hookDisplayLeftColumn($params)
     {
@@ -210,9 +215,10 @@ class MyModule extends Module
 
     public function hookLeftColumn($params)
     {
-
+        $this->myModuleLogError("methode hookLeftColumn appelée");
         if (_PS_VERSION_ < '1.5') {
-            $my_module_link = _PS_BASE_URL_ . __PS_BASE_URI__ . 'modules/' . $this->name . '/sendtoMymodule.php?display=true&token=' . Tools::getAdminTokenLite('AdminModules');
+            $my_module_link = _PS_BASE_URL_ . __PS_BASE_URI__ . 'modules/' . $this->name .
+                '/sendtoMymodule.php?display=true&token=' . Tools::getAdminTokenLite('AdminModules');
         } else {
             $my_module_link = $this->context->link->getModuleLink('mymodule', 'display');
         }
@@ -236,5 +242,78 @@ class MyModule extends Module
     public function hookDisplayHeader()
     {
         $this->context->controller->addCSS($this->_path . 'views/css/mymodule.css', 'all');
+    }
+
+    // hook action
+
+    public function hookActionProductAttributeUpdate($params)
+    {
+        $this->myModuleLogError("hookActionProductAttributeUpdate appelée");
+        $this->actionProductUpdate($params);
+    }
+
+    public function hookActionProductUpdate($params)
+    {
+        $this->myModuleLogError("hookActionProductUpdate appelée");
+        $this->actionProductUpdate($params);
+    }
+
+    public function actionProductUpdate($params)
+    {
+        $this->myModuleLogError("actionProductUpdate: hook action call", 0);
+//        Tools::error_log("actionProductUpdate: hook action call", 1, "error_mymodule.log");
+        $id_product = (int)$params['id_product'];
+        $product = new Product($id_product);
+//        $product = $params['product'];
+
+        if (!Validate::isLoadedObject($product)) {
+            $this->myModuleLogError("Erreur no validate product", 4);
+
+//            Tools::error_log("Erreur no validate product", 3, "error_mymodule.log");
+            return;
+        }
+
+//        Tools::error_log("Je passe ici");
+
+        $mail_admin = (string)Configuration::get('MA_MERCHANT_MAILS');
+        try {
+            Mail::Send(
+                $default_lang = (int)Configuration::get('PS_LANG_DEFAULT'),
+                'updateproduct',
+                Mail::l('Product modification', $default_lang),
+                array(
+                    '{product_name}' => $product->name,
+                    '{product_url}'  => $product->getLink()
+                ),
+                $mail_admin,
+                null,
+                (string)Configuration::get('PS_SHOP_EMAIL'),
+                (string)Configuration::get('PS_SHOP_NAME'),
+                null,
+                null,
+                dirname(__FILE__) . '/mails/',
+                false,
+                (int)$this->context->shop->id
+            );
+            $this->myModuleLogError("actionProductUpdate: mail envoyé à " . $mail_admin, 0);
+        } catch (Exception $e) {
+            $this->myModuleLogError($e, 4);
+//            Tools::error_log($e, 4, "error_mymodule.log");
+        }
+    }
+
+    public function myModuleLogError($object, $error_level = 0)
+    {
+        $error_type = array(
+            0 => "[ALL]",
+            1 => "[DEBUG]",
+            2 => "[INFO]",
+            3 => "[WARN]",
+            4 => "[ERROR]",
+            5 => "[FATAL]"
+        );
+        $stderr = fopen(_PS_MODULE_DIR_ . $this->name . '/error_mymodule.log', 'a');
+        fwrite($stderr, $error_type[$error_level] . " " . print_r($object, true) . "\n");
+        fclose($stderr);
     }
 }
