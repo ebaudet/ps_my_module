@@ -41,9 +41,6 @@ class MyModule extends Module
             require(_PS_MODULE_DIR_ . $this->name . '/backward_compatibility/backward.php');
         }
 
-        // Retrocompatibility
-        $this->initContext();
-
         if (!Configuration::get('MYMODULE_NAME')) {
             $this->warning = $this->l('No name provided');
         }
@@ -72,19 +69,6 @@ class MyModule extends Module
         }
 
         return true;
-    }
-
-    // Retrocompatibility 1.4/1.5
-    private function initContext()
-    {
-        if (class_exists('Context')) {
-            $this->context = Context::getContext();
-        } else {
-            global $smarty, $cookie;
-            $this->context = new StdClass();
-            $this->context->smarty = $smarty;
-            $this->context->cookie = $cookie;
-        }
     }
 
     // Configuration functions
@@ -222,15 +206,6 @@ class MyModule extends Module
     public function hookDisplayLeftColumn($params)
     {
         return $this->hookLeftColumn($params);
-//        $this->context->smarty->assign(
-//            array(
-//                'my_module_name'    => Configuration::get('MYMODULE_NAME'),
-//                'my_module_link'    => $this->context->link->getModuleLink('mymodule', 'display'),
-//                'my_module_message' => $this->l('This is a simple text message')
-//            )
-//        );
-//
-//        return $this->display(__FILE__, 'mymodule.tpl');
     }
 
     public function hookLeftColumn($params)
@@ -238,7 +213,6 @@ class MyModule extends Module
 
         if (_PS_VERSION_ < '1.5') {
             $my_module_link = _PS_BASE_URL_ . __PS_BASE_URI__ . 'modules/' . $this->name . '/sendtoMymodule.php?display=true&token=' . Tools::getAdminTokenLite('AdminModules');
-//            __PS_BASE_URI__.'modules/'.$this->name.
         } else {
             $my_module_link = $this->context->link->getModuleLink('mymodule', 'display');
         }
