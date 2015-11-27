@@ -55,7 +55,7 @@ class MyModule extends Module
         $path = $this->getLocalPath() . 'classes/';
         foreach (scandir($path) as $class) {
             if ($class != "index.php" && is_file($path . $class)) {
-                $class_name = substr($class, 0, -4);
+                $class_name = Tools::substr($class, 0, -4);
                 if ($class_name != 'index' && !class_exists($class_name)) {
                     require_once($path . $class_name . '.php');
                 }
@@ -66,7 +66,7 @@ class MyModule extends Module
 
         foreach (scandir($path) as $class) {
             if ($class != "index.php" && is_file($path . $class)) {
-                $class_name = substr($class, 0, -4);
+                $class_name = Tools::substr($class, 0, -4);
                 if ($class_name != 'index' && !class_exists($class_name)) {
                     require_once($path . $class_name . '.php');
                 }
@@ -148,7 +148,7 @@ class MyModule extends Module
         foreach ($controllers as $controller) {
             if ($controller != 'index.php' && is_file($this->getLocalPath() . '/controllers/admin/' . $controller)) {
                 require_once($this->getLocalPath() . '/controllers/admin/' . $controller);
-                $controller_name = substr($controller, 0, -4);
+                $controller_name = Tools::substr($controller, 0, -4);
                 //Check if class_name is an existing Class or not
                 if (class_exists($controller_name)) {
                     if (method_exists($controller_name, 'install')) {
@@ -169,7 +169,7 @@ class MyModule extends Module
      */
     public function uninstallTabs()
     {
-        return MAC_TotAdminTabHelper::deleteAdminTabs($this->name);
+        return TotAdminTabHelper::deleteAdminTabs($this->name);
     }
 
     ############################################################################################################
@@ -186,7 +186,7 @@ class MyModule extends Module
         $classes = scandir($this->getLocalPath() . '/classes');
         foreach ($classes as $class) {
             if ($class != 'index.php' && is_file($this->getLocalPath() . '/classes/' . $class)) {
-                $class_name = substr($class, 0, -4);
+                $class_name = Tools::substr($class, 0, -4);
                 // Check if class_name is an existing Class or not
                 if (class_exists($class_name)) {
                     if (method_exists($class_name, 'install')) {
@@ -210,7 +210,7 @@ class MyModule extends Module
         $classes = scandir($this->getLocalPath() . '/classes');
         foreach ($classes as $class) {
             if ($class != 'index.php' && is_file($this->getLocalPath() . '/classes/' . $class)) {
-                $class_name = substr($class, 0, -4);
+                $class_name = Tools::substr($class, 0, -4);
                 // Check if class_name is an existing Class or not
                 if (class_exists($class_name)) {
                     if (method_exists($class_name, 'uninstall')) {
@@ -324,10 +324,11 @@ class MyModule extends Module
             $this->myModuleLogError("erreur d'enregistrement de modification produit en bdd");
         }
 
+        $default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
         $mail_admin = (string)Configuration::get('MA_MERCHANT_MAILS');
         try {
             Mail::Send(
-                $default_lang = (int)Configuration::get('PS_LANG_DEFAULT'),
+                $default_lang,
                 'updateproduct',
                 Mail::l('Product modification', $default_lang),
                 array(

@@ -55,7 +55,7 @@ class MyModuleAdminController extends ModuleAdminController
      */
     public function install($menu_id, $module_name)
     {
-        return MAC_TotAdminTabHelper::addAdminTab(array(
+        return TotAdminTabHelper::addAdminTab(array(
             'id_parent'    => $menu_id,
             'className'    => 'MyModuleAdmin',
             'default_name' => 'Product Update',

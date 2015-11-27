@@ -84,7 +84,7 @@ class MyModuleProduct extends ObjectModel
 
     public static function install()
     {
-
+        $sql = array();
         $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . self::$definition['table'] . '` (
                     `' . self::$definition['primary'] . '` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                     `id_product` INT NOT NULL,
@@ -103,6 +103,7 @@ class MyModuleProduct extends ObjectModel
     public static function uninstall()
     {
         // Create Category Table in Database
+        $sql = array();
         $sql[] = 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . self::$definition['table'] . '`';
 
         foreach ($sql as $q) {

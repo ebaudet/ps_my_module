@@ -17,7 +17,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class MAC_TotAdminTabHelper
+class TotAdminTabHelper
 {
     /**
      * Function to delete admin tabs from a menu with the module name
