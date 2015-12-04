@@ -501,7 +501,7 @@ class MyModule extends Module
             4 => "[ERROR]",
             5 => "[FATAL]"
         );
-        $date = date("<Y-m-d(H:m:s)>");
+        $date = date("<Y-m-d(H:i:s)>");
         $stderr = fopen(_PS_MODULE_DIR_ . $this->name . '/error_mymodule.log', 'a');
         fwrite($stderr, $error_type[$error_level] . " " . $date . " " . print_r($object, true) . "\n");
         fclose($stderr);
