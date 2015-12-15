@@ -506,7 +506,7 @@ class MyModule extends Module
         $date = date("<Y-m-d(H:i:s)>");
         $file = $backtrace[0]['file'] . ":" . $backtrace[0]['line'];
         $stderr = fopen(_PS_MODULE_DIR_ . '/' . $module_name . '/log/' . $module_name . '.log', 'a');
-        fwrite($stderr, $error_type[$error_level] . " " . $date . " " . $file . "\n" . print_r($object, true) . "\n");
+        fwrite($stderr, $error_type[$error_level] . " " . $date . " " . $file . "\n" . print_r($object, true) . "\n\n");
         fclose($stderr);
     }
 }
