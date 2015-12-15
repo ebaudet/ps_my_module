@@ -491,7 +491,7 @@ class MyModule extends Module
     # Logger
     ############################################################################################################
 
-    public function myModuleLogError($object, $error_level = 0)
+    public static function logError($object, $error_level = 0)
     {
         $error_type = array(
             0 => "[ALL]",
@@ -501,9 +501,12 @@ class MyModule extends Module
             4 => "[ERROR]",
             5 => "[FATAL]"
         );
+        $module_name = "mymodule";
+        $backtrace = debug_backtrace();
         $date = date("<Y-m-d(H:i:s)>");
-        $stderr = fopen(_PS_MODULE_DIR_ . $this->name . '/error_mymodule.log', 'a');
-        fwrite($stderr, $error_type[$error_level] . " " . $date . " " . print_r($object, true) . "\n");
+        $file = $backtrace[0]['file'] . ":" . $backtrace[0]['line'];
+        $stderr = fopen(_PS_MODULE_DIR_ . '/' . $module_name . '/log/' . $module_name . '.log', 'a');
+        fwrite($stderr, $error_type[$error_level] . " " . $date . " " . $file . "\n" . print_r($object, true) . "\n");
         fclose($stderr);
     }
 }
