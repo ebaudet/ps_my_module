@@ -491,6 +491,14 @@ class MyModule extends Module
     # Logger
     ############################################################################################################
 
+    /**
+     * Fonction de log
+     *
+     * Enregistre dans /modules/mymodule/log/mymodule.log
+     *
+     * @param     $object
+     * @param int $error_level
+     */
     public static function logError($object, $error_level = 0)
     {
         $error_type = array(
