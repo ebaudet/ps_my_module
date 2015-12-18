@@ -236,7 +236,7 @@ class MyModule extends Module
 
     public function hookLeftColumn($params)
     {
-        $this->myModuleLogError("methode hookLeftColumn appelée");
+        $this->logError("methode hookLeftColumn appelée");
         if (_PS_VERSION_ < '1.5') {
             $my_module_link = _PS_BASE_URL_ . __PS_BASE_URI__ . 'modules/' . $this->name .
                 '/sendtoMymodule.php?display=true&token=' . Tools::getAdminTokenLite('AdminModules');
@@ -304,12 +304,12 @@ class MyModule extends Module
 
     public function hookActionProductUpdate($params)
     {
-        $this->myModuleLogError("hookActionProductUpdate: hook action call", 0);
+        $this->logError("hookActionProductUpdate: hook action call", 0);
         $id_product = (int)$params['id_product'];
         $product = new Product($id_product);
 
         if (!Validate::isLoadedObject($product)) {
-            $this->myModuleLogError("Erreur no validate product", 4);
+            $this->logError("Erreur no validate product", 4);
 
             return;
         }
@@ -321,7 +321,7 @@ class MyModule extends Module
         ' . (int)$id_product . ', NOW()
         )';
         if (DB::getInstance()->execute($sql) === false) {
-            $this->myModuleLogError("erreur d'enregistrement de modification produit en bdd");
+            $this->logError("erreur d'enregistrement de modification produit en bdd");
         }
 
         $default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
@@ -345,9 +345,9 @@ class MyModule extends Module
                 false,
                 (int)$this->context->shop->id
             );
-            $this->myModuleLogError("actionProductUpdate: mail envoyé à " . $mail_admin, 0);
+            $this->logError("actionProductUpdate: mail envoyé à " . $mail_admin, 0);
         } catch (Exception $e) {
-            $this->myModuleLogError($e, 4);
+            $this->logError($e, 4);
         }
     }
 
